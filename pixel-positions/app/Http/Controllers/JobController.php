@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Job;
 use App\Http\Requests\UpdateJobRequest;
 use App\Models\Tag;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -17,7 +17,8 @@ class JobController extends Controller
      */
     public function index()
     {
-        $jobs = Job::all()->groupBy('featured');
+        $jobs = Job::latest()->with(['employer' , 'tags'])
+        ->get()->groupBy('featured');
         // return $jobs;
         return view('jobs.index', [
             'featuredJobs' => $jobs[1] ?? [],
@@ -57,7 +58,7 @@ class JobController extends Controller
             }
         }
 
-        redirect('/');
+        return redirect('/');
     }
 
     /**
